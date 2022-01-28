@@ -19,7 +19,6 @@ import java.sql.Timestamp;
 @NoArgsConstructor
 @Data
 public class User {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -38,5 +37,4 @@ public class User {
     private Role role;
     @Column(name = "is_enabled")
     private boolean isEnabled;
-
 }
