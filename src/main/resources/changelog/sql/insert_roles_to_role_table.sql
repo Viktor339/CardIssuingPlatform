@@ -1,5 +1,5 @@
 --liquibase formatted sql
---changeset ViktorBelous:3
+--changeset ViktorBelous:4
 insert into roles (role_name)
 values ('ROLE_ADMIN');
 

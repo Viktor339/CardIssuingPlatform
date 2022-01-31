@@ -13,5 +13,4 @@ spring:
     contexts: dev
   jpa:
     show-sql: true
- 
 
