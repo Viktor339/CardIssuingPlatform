@@ -46,5 +46,44 @@ create table if not exists users
 
 
 
+--changeset ViktorBelous:5
+create table if not exists cards
+(
+    id bigserial not null constraint cards_pkey
+    primary key,
+    created_by  bigint      not null,
+    currency    varchar(3)   not null,
+    first_name  varchar(255) not null,
+    is_active   boolean      not null,
+    last_name   varchar(255) not null,
+    number      varchar(4)   not null,
+    type        varchar(255) not null,
+    valid_till  date         not null,
+    company_id  bigint       not null
+    constraint fkbk2y19sqrqsv8gc6xw4gi5eyc
+    references companies,
+    owned_by_id bigint
+    constraint fkdpkoa5sm3hx0bgiifpjabqdlb
+    references users
+    );
+
+--rollback drop table cards;
+
+
+
+--changeset ViktorBelous:6
+create table if not exists card_status
+(
+    id bigserial not null constraint card_status_pkey
+    primary key,
+    created         timestamp  not null,
+    previous_status varchar(3),
+    status          varchar(3) not null,
+    card_id         bigint
+    constraint fkarp7uu64f4y3ow21439lyqxa2
+    references cards
+    );
+--rollback drop table card_status;
+
 
 
