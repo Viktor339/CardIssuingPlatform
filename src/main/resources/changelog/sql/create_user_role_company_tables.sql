@@ -7,7 +7,6 @@ create table if not exists roles
     role_name varchar(255) not null
     );
 
-alter table roles owner to postgres;
 --rollback drop table roles;
 
 --changeset ViktorBelous:2
@@ -19,8 +18,6 @@ create table if not exists companies
     name  varchar(255) not null
     );
 
-alter table companies
-    owner to postgres;
 --rollback drop table companies;
 
 
@@ -45,7 +42,6 @@ create table if not exists users
     references roles
     );
 
-alter table users owner to postgres;
 --rollback drop table users;
 
 
