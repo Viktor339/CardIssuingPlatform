@@ -1,6 +1,7 @@
 package com.cardissuingplatform.controller;
 
 import com.cardissuingplatform.service.exception.CompanyAlreadyExistsException;
+import com.cardissuingplatform.service.exception.CompanyNotFoundException;
 import com.cardissuingplatform.service.exception.ExceptionResponse;
 import com.cardissuingplatform.service.exception.ValidatorPageException;
 import org.springframework.http.HttpStatus;
@@ -84,6 +85,19 @@ public class RestExceptionHandler {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ResponseBody
     public ExceptionResponse handleValidationException(ValidationException e) {
+        return ExceptionResponse.builder()
+                .timestamp(LocalDateTime.now())
+                .status(HttpStatus.BAD_REQUEST.value())
+                .error(HttpStatus.BAD_REQUEST.name())
+                .message(e.getMessage())
+                .build();
+    }
+
+
+    @ExceptionHandler(CompanyNotFoundException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ResponseBody
+    public ExceptionResponse handleCompanyNotFoundException(CompanyNotFoundException e) {
         return ExceptionResponse.builder()
                 .timestamp(LocalDateTime.now())
                 .status(HttpStatus.BAD_REQUEST.value())

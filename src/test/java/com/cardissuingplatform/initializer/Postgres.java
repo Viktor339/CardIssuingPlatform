@@ -9,10 +9,15 @@ import org.testcontainers.containers.PostgreSQLContainer;
 @UtilityClass
 public class Postgres {
 
-    public static final PostgreSQLContainer<?> postgreSQLContainer = new PostgreSQLContainer<>("postgres:14.1")
-            .withDatabaseName("db")
-            .withUsername("user")
-            .withPassword("pass");
+    public static final PostgreSQLContainer<?> postgreSQLContainer;
+
+    static {
+        postgreSQLContainer = new PostgreSQLContainer<>("postgres:14.1")
+                .withDatabaseName("db")
+                .withUsername("user")
+                .withPassword("pass");
+        postgreSQLContainer.start();
+    }
 
 
     public static class Initializer implements ApplicationContextInitializer<ConfigurableApplicationContext> {
@@ -21,8 +26,7 @@ public class Postgres {
             TestPropertyValues.of(
                     "spring.datasource.url=" + postgreSQLContainer.getJdbcUrl(),
                     "spring.datasource.username=" + postgreSQLContainer.getUsername(),
-                    "spring.datasource.password=" + postgreSQLContainer.getPassword(),
-                    "spring.liquibase.enabled=true"
+                    "spring.datasource.password=" + postgreSQLContainer.getPassword()
             ).applyTo(configurableApplicationContext.getEnvironment());
         }
     }

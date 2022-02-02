@@ -16,5 +16,5 @@ spring:
 validator:
   company:
     page:
-      min: 5
+      min: 10
       max: 20

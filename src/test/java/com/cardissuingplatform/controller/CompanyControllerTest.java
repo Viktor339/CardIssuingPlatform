@@ -1,29 +1,37 @@
 package com.cardissuingplatform.controller;
 
 import com.cardissuingplatform.IntegrationTestBase;
-import com.cardissuingplatform.controller.dto.ChangeCompanyDto;
+import com.cardissuingplatform.controller.dto.ChangeCompanyResponse;
 import com.cardissuingplatform.controller.request.ChangeCompanyRequest;
 import com.cardissuingplatform.controller.request.CreateCompanyRequest;
-import com.cardissuingplatform.model.Company;
-import com.cardissuingplatform.service.Page;
+import com.cardissuingplatform.controller.response.GetCompanyResponse;
 import com.cardissuingplatform.service.exception.CompanyAlreadyExistsException;
-import com.cardissuingplatform.service.exception.ValidatorPageException;
+import com.cardissuingplatform.service.exception.CompanyNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
+import org.springframework.test.web.servlet.MockMvc;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-
+import static com.cardissuingplatform.TestUtil.objectToJson;
+import static org.hamcrest.Matchers.containsString;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 public class CompanyControllerTest extends IntegrationTestBase {
 
     @Autowired
-    private CompanyController companyController;
+    private MockMvc mockMvc;
 
     private CreateCompanyRequest createCompanyRequest;
     private ChangeCompanyRequest changeCompanyRequest;
-    private ChangeCompanyDto changeCompanyDto;
+    private ChangeCompanyResponse changeCompanyResponse;
+    private GetCompanyResponse getCompanyResponse;
 
     @BeforeEach
     public void setUp() {
@@ -32,10 +40,16 @@ public class CompanyControllerTest extends IntegrationTestBase {
         createCompanyRequest.setIsEnabled(true);
 
         changeCompanyRequest = new ChangeCompanyRequest();
-        changeCompanyRequest.setName("D");
+        changeCompanyRequest.setName("A");
         changeCompanyRequest.setIsEnabled(true);
 
-        changeCompanyDto = ChangeCompanyDto.builder()
+        changeCompanyResponse = ChangeCompanyResponse.builder()
+                .id(1L)
+                .name("A")
+                .isEnabled(true)
+                .build();
+
+        getCompanyResponse = GetCompanyResponse.builder()
                 .id(1L)
                 .name("A")
                 .isEnabled(true)
@@ -44,52 +58,62 @@ public class CompanyControllerTest extends IntegrationTestBase {
     }
 
     @Test
-    public void testCreateShouldThrowCompanyAlreadyExistsException() {
+    public void testCreateShouldThrowCompanyAlreadyExistsException() throws Exception {
 
-        assertThrows(CompanyAlreadyExistsException.class, () ->
-                companyController.create(createCompanyRequest));
-
+        mockMvc.perform(post("/company")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectToJson(createCompanyRequest))
+                ).andDo(print())
+                .andExpect(status().is4xxClientError())
+                .andExpect(result -> assertTrue(result.getResolvedException() instanceof CompanyAlreadyExistsException));
     }
 
     @Test
-    public void testCreateShouldReturnId() {
+    public void testCreateShouldReturnId() throws Exception {
 
-        createCompanyRequest.setName("D");
+        createCompanyRequest.setName("F");
 
-        Long id = companyController.create(createCompanyRequest);
-        assertEquals(4, id);
+        mockMvc.perform(post("/company")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectToJson(createCompanyRequest))
+                ).andDo(print())
+                .andExpect(status().isOk());
     }
 
     @Test
-    public void testChangeCompanyAlreadyExistsException() {
+    public void testChangeCompanyNotFoundException() throws Exception {
 
-        assertThrows(CompanyAlreadyExistsException.class, () ->
-                companyController.change(changeCompanyRequest));
+        changeCompanyRequest.setName("D");
+
+        mockMvc.perform(patch("/company")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectToJson(changeCompanyRequest))
+                ).andDo(print())
+                .andExpect(status().is4xxClientError())
+                .andExpect(result -> assertTrue(result.getResolvedException() instanceof CompanyNotFoundException));
     }
 
 
     @Test
-    public void testChangeCompanyShouldReturnChangeCompanyDto() {
+    public void testChangeCompanyShouldReturnChangeCompanyDto() throws Exception {
 
-        changeCompanyRequest.setName("A");
-        ChangeCompanyDto resultDto = companyController.change(changeCompanyRequest);
-
-        assertEquals(changeCompanyDto, resultDto);
+        mockMvc.perform(patch("/company")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectToJson(changeCompanyRequest))
+                ).andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().string(containsString(objectToJson(changeCompanyResponse))));
     }
 
-    @Test
-    public void testGetShouldThrowValidatorPageException() {
-
-        assertThrows(ValidatorPageException.class, () ->
-                companyController.get("asc", 1, 1));
-    }
 
     @Test
-    public void testGetShouldReturnPage() {
+    public void testGetShouldReturnPage() throws Exception {
 
-        Page<Company> companyPage = companyController.get("asc", 10, 0);
-        assertEquals(3, companyPage.getItems().size());
-
+        mockMvc.perform(get("/company")
+                        .param("page", "0")
+                ).andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().string(containsString(objectToJson(getCompanyResponse))));
     }
 }
 

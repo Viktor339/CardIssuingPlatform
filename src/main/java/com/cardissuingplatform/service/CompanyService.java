@@ -1,29 +1,26 @@
 package com.cardissuingplatform.service;
 
-import com.cardissuingplatform.controller.dto.ChangeCompanyDto;
+import com.cardissuingplatform.controller.dto.ChangeCompanyResponse;
 import com.cardissuingplatform.controller.request.ChangeCompanyRequest;
 import com.cardissuingplatform.controller.request.CreateCompanyRequest;
+import com.cardissuingplatform.controller.response.GetCompanyResponse;
 import com.cardissuingplatform.model.Company;
 import com.cardissuingplatform.repository.CompanyRepository;
 import com.cardissuingplatform.service.exception.CompanyAlreadyExistsException;
+import com.cardissuingplatform.service.exception.CompanyNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.transaction.Transactional;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Service
-@Transactional
 public class CompanyService {
 
     private final CompanyRepository companyRepository;
-    @PersistenceContext
-    private final EntityManager entityManager;
 
 
     public Long create(CreateCompanyRequest createCompanyRequest) {
@@ -42,16 +39,14 @@ public class CompanyService {
         return company.getId();
     }
 
-    public ChangeCompanyDto change(ChangeCompanyRequest changeCompanyRequest) {
+    public ChangeCompanyResponse change(ChangeCompanyRequest changeCompanyRequest) {
 
         Company company = companyRepository.findCompanyByName(changeCompanyRequest.getName())
-                .orElseThrow(() -> new CompanyAlreadyExistsException("Company not found"));
+                .orElseThrow(() -> new CompanyNotFoundException("Company not found"));
 
         company.setEnabled(changeCompanyRequest.getIsEnabled());
 
-        entityManager.persist(company);
-
-        return ChangeCompanyDto.builder()
+        return ChangeCompanyResponse.builder()
                 .id(company.getId())
                 .name(company.getName())
                 .isEnabled(company.isEnabled())
@@ -59,13 +54,21 @@ public class CompanyService {
     }
 
 
-    public Page<Company> get(Integer size, Integer page, String sort) {
+    public Page<GetCompanyResponse> get(Integer size, Integer page, String sort) {
 
         Pageable pageable = PageRequest.of(page, size, Sort.by("name").ascending());
 
         if (sort.equals("desc")) {
             pageable = PageRequest.of(page, size, Sort.by("name").descending());
         }
-        return new Page<>(companyRepository.findAll(pageable));
+
+        return new Page<>(companyRepository.findAll(pageable)
+                .stream()
+                .map(company -> GetCompanyResponse
+                        .builder()
+                        .id(company.getId())
+                        .name(company.getName())
+                        .isEnabled(company.isEnabled())
+                        .build()).collect(Collectors.toList()));
     }
 }

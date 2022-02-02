@@ -1,5 +1,5 @@
 --liquibase formatted sql
---changeset ViktorBelous:4
+--changeset ViktorBelous:5
 insert into companies (name,is_enabled)
 values ('A',true);
 
