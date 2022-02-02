@@ -10,6 +10,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import java.sql.Timestamp;
 
@@ -37,4 +38,6 @@ public class User {
     private Role role;
     @Column(name = "is_enabled")
     private boolean isEnabled;
+    @OneToOne
+    private Company company;
 }
