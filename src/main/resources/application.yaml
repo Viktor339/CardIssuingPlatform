@@ -13,4 +13,8 @@ spring:
     contexts: dev
   jpa:
     show-sql: true
-
+validator:
+  company:
+    page:
+      min: 10
+      max: 20

@@ -1,0 +1,7 @@
+databaseChangeLog:
+  - include:
+      file: changelog/sql/create_user_role_company_tables.sql
+  - include:
+      file: changelog/sql/insert_roles_to_role_table.sql
+  - include:
+      file: changelog/sql/test/insert_companies_to_companie_table.sql

@@ -1,0 +1,13 @@
+
+spring:
+  liquibase:
+    enabled: true
+    change-log: classpath:changelog/sql/db.changelog-master.yaml
+    contexts: dev
+  jpa:
+    show-sql: true
+validator:
+  company:
+    pageSize:
+      min: 5
+      max: 20
