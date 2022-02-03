@@ -23,22 +23,10 @@ public class CardStatus {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
     private String status;
     private Timestamp created;
     @Column(name = "previous_status")
     private String previousStatus;
-
     @OneToOne
     private Card card;
-
-    //id (bigserial) not null
-    //
-    //status (varchar 3) not null - статус карточки (обычно выглядит как 3-значное число)
-    //
-    //created (timestamp) not null
-    //
-    //previous_status (varchar 3)
-    //
-    //card_id (bigint) not null oreign_key на таблицу card
 }

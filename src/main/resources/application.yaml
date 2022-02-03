@@ -13,8 +13,6 @@ spring:
     contexts: dev
   jpa:
     show-sql: true
-#    hibernate:
-#      ddl-auto: create
 validator:
   company:
     page:
