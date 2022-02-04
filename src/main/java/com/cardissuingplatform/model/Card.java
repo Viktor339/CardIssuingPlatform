@@ -13,7 +13,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
-import java.sql.Timestamp;
+import java.time.Instant;
 
 @Entity
 @Table(name = "cards")
@@ -28,7 +28,7 @@ public class Card {
     @Column(name = "type")
     private Type type;
     @Column(name = "valid_till")
-    private Timestamp validTill;
+    private Instant validTill;
     private String number;
     @Column(name = "first_name")
     private String firstName;

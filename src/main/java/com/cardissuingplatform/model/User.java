@@ -12,7 +12,7 @@ import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
-import java.sql.Timestamp;
+import java.time.Instant;
 
 @Entity
 @Table(name = "users")
@@ -31,9 +31,9 @@ public class User {
     @Column(name = "last_name")
     private String lastName;
     @Column(name = "date_of_birth")
-    private Timestamp dateOfBirth;
+    private Instant dateOfBirth;
     @Column(name = "created_at")
-    private Timestamp createdAt;
+    private Instant createdAt;
     @ManyToOne
     private Role role;
     @Column(name = "is_enabled")

@@ -11,7 +11,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
-import java.sql.Timestamp;
+import java.time.Instant;
 
 @Entity
 @Table(name = "card_status")
@@ -24,7 +24,7 @@ public class CardStatus {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String status;
-    private Timestamp created;
+    private Instant created;
     @Column(name = "previous_status")
     private String previousStatus;
     @OneToOne
