@@ -2,9 +2,9 @@ package com.cardissuingplatform.controller;
 
 import com.cardissuingplatform.config.PageProperties;
 import com.cardissuingplatform.controller.dto.ChangeCompanyResponse;
-import com.cardissuingplatform.controller.request.ChangeCompanyRequest;
 import com.cardissuingplatform.controller.request.CreateCompanyRequest;
 import com.cardissuingplatform.controller.response.GetCompanyResponse;
+import com.cardissuingplatform.controller.request.ChangeCompanyRequest;
 import com.cardissuingplatform.service.CompanyService;
 import com.cardissuingplatform.service.Page;
 import com.cardissuingplatform.service.PageService;

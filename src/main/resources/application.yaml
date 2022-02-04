@@ -18,3 +18,17 @@ validator:
     page:
       min: 10
       max: 20
+code:
+  currency:
+    eur: 978
+    jpy: 392
+    gbp: 826
+  status:
+    sentForProcessing: 100
+    waitingForTheStartOfProduction: 200
+    inTheProcessOfManufacturing: 300
+    waitingForDepartureToTheBranch: 400
+    onDepartment: 500
+    transferredToTheClient: 600
+
+

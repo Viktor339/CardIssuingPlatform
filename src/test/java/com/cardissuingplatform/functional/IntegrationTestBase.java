@@ -1,6 +1,6 @@
-package com.cardissuingplatform;
+package com.cardissuingplatform.functional;
 
-import com.cardissuingplatform.initializer.Postgres;
+import com.cardissuingplatform.functional.initializer.Postgres;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;

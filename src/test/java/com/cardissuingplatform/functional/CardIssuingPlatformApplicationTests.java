@@ -1,4 +1,4 @@
-package com.cardissuingplatform;
+package com.cardissuingplatform.functional;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;

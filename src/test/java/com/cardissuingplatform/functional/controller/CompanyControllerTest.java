@@ -1,6 +1,6 @@
-package com.cardissuingplatform.controller;
+package com.cardissuingplatform.functional.controller;
 
-import com.cardissuingplatform.IntegrationTestBase;
+import com.cardissuingplatform.functional.IntegrationTestBase;
 import com.cardissuingplatform.controller.dto.ChangeCompanyResponse;
 import com.cardissuingplatform.controller.request.ChangeCompanyRequest;
 import com.cardissuingplatform.controller.request.CreateCompanyRequest;
@@ -13,7 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
-import static com.cardissuingplatform.TestUtil.objectToJson;
+import static com.cardissuingplatform.functional.TestUtil.objectToJson;
 import static org.hamcrest.Matchers.containsString;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
