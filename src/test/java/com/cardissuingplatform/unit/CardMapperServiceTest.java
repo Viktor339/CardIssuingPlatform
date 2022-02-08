@@ -45,7 +45,7 @@ public class CardMapperServiceTest {
                 arguments("Отправлена на обработку", "100"),
                 arguments("Ожидание начала изготовления", "200"),
                 arguments("В процессе изготовления", "300"),
-                arguments("Состояние неизвестно", "111")
+                arguments("Состояние неизвестно", "def")
         );
     }
 }

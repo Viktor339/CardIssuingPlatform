@@ -21,10 +21,11 @@ public class CardControllerTest extends IntegrationTestBase {
         mockMvc.perform(get("/accountant/v1/cards")
                         .param("isActive", "true")
                         .param("page", "0")
+                        .param("status", "100")
                 ).andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().string(containsString("\"id\":1,\"type\":\"PERSONAL\"")))
-                .andExpect(content().string(containsString("\"firstName\":\"Tom\",\"lastName\":\"Hanks\"")));
+                .andExpect(content().string(containsString("\"firstName\":\"Tommy\",\"lastName\":\"Hanks\"")));
     }
 
 }

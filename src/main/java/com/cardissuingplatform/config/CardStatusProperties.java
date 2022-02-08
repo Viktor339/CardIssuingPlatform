@@ -5,23 +5,14 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.validation.annotation.Validated;
 
-import javax.validation.constraints.NotNull;
+import javax.validation.constraints.NotEmpty;
+import java.util.Map;
 
 @Configuration
 @Validated
 @Data
 @ConfigurationProperties(prefix = "code.status")
 public class CardStatusProperties {
-    @NotNull
-    private String sentForProcessing;
-    @NotNull
-    private String waitingForTheStartOfProduction;
-    @NotNull
-    private String inTheProcessOfManufacturing;
-    @NotNull
-    private String waitingForDepartureToTheBranch;
-    @NotNull
-    private String onDepartment;
-    @NotNull
-    private String transferredToTheClient;
+    @NotEmpty
+    private Map<String, String> properties;
 }

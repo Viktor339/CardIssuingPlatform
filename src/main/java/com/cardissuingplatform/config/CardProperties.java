@@ -6,17 +6,14 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.validation.annotation.Validated;
 
-import javax.validation.constraints.NotNull;
+import javax.validation.constraints.NotEmpty;
+import java.util.Map;
 
 @Configuration
 @Validated
 @Data
 @ConfigurationProperties(prefix = "code.currency")
 public class CardProperties {
-    @NotNull
-    private String eur;
-    @NotNull
-    private String jpy;
-    @NotNull
-    private String gbp;
+    @NotEmpty
+    private Map<String, String> properties;
 }

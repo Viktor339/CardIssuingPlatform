@@ -1,19 +1,24 @@
 package com.cardissuingplatform.controller.dto;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Builder(toBuilder = true)
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class GetCardDto {
 
     private String sortName;
-    private String sortNameBy;
+    private String sortNameBy = "asc";
     private String sortLastName;
-    private String sortLastNameBy;
+    private String sortLastNameBy = "asc";
     private String currency;
     private String status;
-    private Boolean active;
-    private Integer size;
-    private Integer page;
+    private Boolean isActive;
+    private Integer size = 10;
+    private Integer page = 0;
+
 }

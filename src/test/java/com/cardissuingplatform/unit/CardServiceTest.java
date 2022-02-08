@@ -2,7 +2,6 @@ package com.cardissuingplatform.unit;
 
 import com.cardissuingplatform.controller.dto.GetCardDto;
 import com.cardissuingplatform.controller.response.GetCardResponse;
-import com.cardissuingplatform.repository.CardRepository;
 import com.cardissuingplatform.service.CardMapperService;
 import com.cardissuingplatform.service.CardService;
 import org.junit.jupiter.api.BeforeEach;
@@ -11,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,8 +24,6 @@ public class CardServiceTest {
     private CardService cardService;
 
     @MockBean
-    private CardRepository cardRepository;
-    @MockBean
     private CardMapperService cardMapperService;
 
 
@@ -35,18 +33,25 @@ public class CardServiceTest {
     @BeforeEach
     public void init() {
         getCardDto = GetCardDto.builder()
-                .currency("978").build();
+                .currency("978")
+                .page(0)
+                .size(1)
+                .build();
 
         list.add(GetCardResponse.builder()
-                .currency("978")
-                .currentStatus("100")
+                .id(2L)
+                .type(GetCardResponse.Type.PERSONAL)
+                .validTill(Instant.parse("2022-02-03T21:00:00Z"))
+                .firstName("Bready")
+                .lastName("Pitt")
+                .isActive(true)
+                .currency("Евро")
                 .build());
     }
 
     @Test
     public void test() {
 
-        when(cardRepository.findByGetCardDto(getCardDto)).thenReturn(list);
         when(cardMapperService.getCurrency("978")).thenReturn("Евро");
 
         assertEquals(list, cardService.get(getCardDto));

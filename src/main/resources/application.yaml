@@ -20,15 +20,19 @@ validator:
       max: 20
 code:
   currency:
-    eur: 978
-    jpy: 392
-    gbp: 826
+     properties:
+      978: Евро
+      392: Японская йена
+      826: Фунт стерлингов Великобритании
+      def: Неизвестная валюта
   status:
-    sentForProcessing: 100
-    waitingForTheStartOfProduction: 200
-    inTheProcessOfManufacturing: 300
-    waitingForDepartureToTheBranch: 400
-    onDepartment: 500
-    transferredToTheClient: 600
+     properties:
+      100: Отправлена на обработку
+      200: Ожидание начала изготовления
+      300: В процессе изготовления
+      400: Ожидает отправку в отделение
+      500: В отделении
+      600: Передана клиенту
+      def: Состояние неизвестно
 
 
