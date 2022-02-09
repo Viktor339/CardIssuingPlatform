@@ -6,7 +6,6 @@ spring:
 
     username: postgres
     password: root
-
   liquibase:
     enabled: true
     change-log: classpath:changelog/db.changelog-master.yaml
@@ -34,5 +33,11 @@ code:
       500: В отделении
       600: Передана клиенту
       def: Состояние неизвестно
+jwt:
+  token:
+    secret: secret
+    accessExpired: 86400000
+    refreshExpired: 604800000
+
 
 

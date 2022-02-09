@@ -1,8 +1,11 @@
 package com.cardissuingplatform.controller;
 
+import com.cardissuingplatform.service.exception.AuthenticationException;
 import com.cardissuingplatform.service.exception.CompanyAlreadyExistsException;
 import com.cardissuingplatform.service.exception.CompanyNotFoundException;
 import com.cardissuingplatform.service.exception.ExceptionResponse;
+import com.cardissuingplatform.service.exception.JwtAuthenticationException;
+import com.cardissuingplatform.service.exception.UserAlreadyExistException;
 import com.cardissuingplatform.service.exception.ValidatorPageException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -98,6 +101,46 @@ public class RestExceptionHandler {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ResponseBody
     public ExceptionResponse handleCompanyNotFoundException(CompanyNotFoundException e) {
+        return ExceptionResponse.builder()
+                .timestamp(LocalDateTime.now())
+                .status(HttpStatus.BAD_REQUEST.value())
+                .error(HttpStatus.BAD_REQUEST.name())
+                .message(e.getMessage())
+                .build();
+    }
+
+
+    @ExceptionHandler(JwtAuthenticationException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ResponseBody
+    public ExceptionResponse handleJwtAuthenticationException(JwtAuthenticationException e) {
+        return ExceptionResponse.builder()
+                .timestamp(LocalDateTime.now())
+                .status(HttpStatus.BAD_REQUEST.value())
+                .error(HttpStatus.BAD_REQUEST.name())
+                .message(e.getMessage())
+                .build();
+    }
+
+
+
+    @ExceptionHandler(AuthenticationException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ResponseBody
+    public ExceptionResponse handleAuthenticationException(AuthenticationException e) {
+        return ExceptionResponse.builder()
+                .timestamp(LocalDateTime.now())
+                .status(HttpStatus.BAD_REQUEST.value())
+                .error(HttpStatus.BAD_REQUEST.name())
+                .message(e.getMessage())
+                .build();
+    }
+
+
+    @ExceptionHandler(UserAlreadyExistException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ResponseBody
+    public ExceptionResponse handleUserAlreadyExistException(UserAlreadyExistException e) {
         return ExceptionResponse.builder()
                 .timestamp(LocalDateTime.now())
                 .status(HttpStatus.BAD_REQUEST.value())
