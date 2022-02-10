@@ -2,7 +2,6 @@ package com.cardissuingplatform.service;
 
 import com.cardissuingplatform.controller.dto.GetCardDto;
 import com.cardissuingplatform.controller.response.GetCardResponse;
-import com.cardissuingplatform.model.Card;
 import com.cardissuingplatform.model.CardStatus;
 import com.cardissuingplatform.model.Card_;
 import com.cardissuingplatform.repository.CardStatusRepository;
@@ -15,6 +14,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static com.cardissuingplatform.repository.specification.CardSpecification.withActive;
 import static com.cardissuingplatform.repository.specification.CardSpecification.withCardStatus;
@@ -25,7 +25,7 @@ import static org.springframework.data.jpa.domain.Specification.where;
 @RequiredArgsConstructor
 public class CardService {
     private final CardStatusRepository cardStatusRepository;
-    private final CardMapperService cardMapperService;
+    private final ConverterService converterService;
 
     public List<GetCardResponse> get(GetCardDto getCardDto) {
 
@@ -50,21 +50,9 @@ public class CardService {
 
         Pageable pageable = PageRequest.of(getCardDto.getPage(), getCardDto.getSize(), Sort.by(orders));
 
-        List<GetCardResponse> result = new ArrayList<>();
-        cardStatusRepository.findAll(spec, pageable).getContent()
-                .forEach(cardStatus -> {
-                    Card card = cardStatus.getCard();
-                    result.add(GetCardResponse.builder()
-                            .id(card.getId())
-                            .type(GetCardResponse.Type.valueOf(card.getType().name()))
-                            .validTill(card.getValidTill())
-                            .firstName(card.getFirstName())
-                            .lastName(card.getLastName())
-                            .isActive(card.getIsActive())
-                            .currentStatus(cardMapperService.getStatus(cardStatus.getStatus()))
-                            .currency(cardMapperService.getCurrency(card.getCurrency()))
-                            .build());
-                });
-        return result;
+        return cardStatusRepository.findAll(spec, pageable).getContent()
+                .stream()
+                .map(converterService::cardStatusToGetCardResponse)
+                .collect(Collectors.toList());
     }
 }
