@@ -5,8 +5,8 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.validation.annotation.Validated;
 
-import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.PositiveOrZero;
 
 @Configuration
 @Validated
@@ -14,10 +14,10 @@ import javax.validation.constraints.NotNull;
 @ConfigurationProperties(prefix = "validator.company.page")
 public class PageProperties {
 
-    @Min(0)
+    @PositiveOrZero
     @NotNull
     private Integer min;
-    @Min(0)
+    @PositiveOrZero
     @NotNull
     private Integer max;
 

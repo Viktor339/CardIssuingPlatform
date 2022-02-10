@@ -1,4 +1,4 @@
-package com.cardissuingplatform.initializer;
+package com.cardissuingplatform.functional.initializer;
 
 import lombok.experimental.UtilityClass;
 import org.springframework.boot.test.util.TestPropertyValues;
