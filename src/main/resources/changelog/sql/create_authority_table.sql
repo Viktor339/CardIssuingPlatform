@@ -14,7 +14,4 @@ create table if not exists authority
     primary key (authority_name, user_id)
 );
 
-create index if not exists authorities_authority_name_user_id_index
-    on authority (authority_name, user_id);
-
 --rollback drop table authority;
