@@ -3,3 +3,5 @@ databaseChangeLog:
     file: changelog/sql/create_user_role_company_tables.sql
 - include:
     file: changelog/sql/insert_roles_to_role_table.sql
+- include:
+    file: changelog/sql/create_authority_table.sql
