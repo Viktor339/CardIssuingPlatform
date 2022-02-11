@@ -8,6 +8,8 @@ import lombok.RequiredArgsConstructor;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.Id;
 import javax.persistence.IdClass;
 import javax.persistence.OneToOne;
@@ -16,11 +18,12 @@ import java.io.Serializable;
 import java.time.Instant;
 
 @Entity
-@Table(name = "authorities")
+@Table(name = "authority")
 @AllArgsConstructor
 @NoArgsConstructor
 @IdClass(Authority.AuthorityId.class)
 @Builder(toBuilder = true)
+@Data
 public class Authority {
 
     @Id
@@ -29,6 +32,7 @@ public class Authority {
 
     @Id
     @Column(name = "authority_name")
+    @Enumerated(EnumType.STRING)
     private AuthorityEnum authorityName;
 
     @Column(name = "created_time")
@@ -44,8 +48,9 @@ public class Authority {
     @Data
     @RequiredArgsConstructor
     public static class AuthorityId implements Serializable {
-        private Authority.AuthorityEnum authorityName;
+
         private Long user;
+        private Authority.AuthorityEnum authorityName;
     }
 
 }

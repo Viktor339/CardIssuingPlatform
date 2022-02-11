@@ -1,11 +1,14 @@
 package com.cardissuingplatform.controller;
 
 import com.cardissuingplatform.service.exception.AuthenticationException;
+import com.cardissuingplatform.service.exception.AuthorityNotFoundException;
 import com.cardissuingplatform.service.exception.CompanyAlreadyExistsException;
 import com.cardissuingplatform.service.exception.CompanyNotFoundException;
 import com.cardissuingplatform.service.exception.ExceptionResponse;
 import com.cardissuingplatform.service.exception.JwtAuthenticationException;
 import com.cardissuingplatform.service.exception.UserAlreadyExistException;
+import com.cardissuingplatform.service.exception.UserNotBelongToTheCompany;
+import com.cardissuingplatform.service.exception.UserNotFoundException;
 import com.cardissuingplatform.service.exception.ValidatorPageException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -148,4 +151,41 @@ public class RestExceptionHandler {
                 .message(e.getMessage())
                 .build();
     }
+
+    @ExceptionHandler(AuthorityNotFoundException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ResponseBody
+    public ExceptionResponse handleAuthorityNotFoundException(AuthorityNotFoundException e) {
+        return ExceptionResponse.builder()
+                .timestamp(LocalDateTime.now())
+                .status(HttpStatus.BAD_REQUEST.value())
+                .error(HttpStatus.BAD_REQUEST.name())
+                .message(e.getMessage())
+                .build();
+    }
+
+    @ExceptionHandler(UserNotFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    @ResponseBody
+    public ExceptionResponse handleUserNotFoundException(UserNotFoundException e) {
+        return ExceptionResponse.builder()
+                .timestamp(LocalDateTime.now())
+                .status(HttpStatus.NOT_FOUND.value())
+                .error(HttpStatus.NOT_FOUND.name())
+                .message(e.getMessage())
+                .build();
+    }
+
+    @ExceptionHandler(UserNotBelongToTheCompany.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    @ResponseBody
+    public ExceptionResponse handleUserNotBelongToTheCompany(UserNotBelongToTheCompany e) {
+        return ExceptionResponse.builder()
+                .timestamp(LocalDateTime.now())
+                .status(HttpStatus.NOT_FOUND.value())
+                .error(HttpStatus.NOT_FOUND.name())
+                .message(e.getMessage())
+                .build();
+    }
+
 }
