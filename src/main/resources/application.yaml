@@ -36,8 +36,8 @@ code:
 jwt:
   token:
     secret: secret
-    accessExpired: 86400000
-    refreshExpired: 604800000
+    accessExpired: 30m
+    refreshExpired: 3d
 
 
 

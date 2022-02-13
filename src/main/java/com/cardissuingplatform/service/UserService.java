@@ -39,8 +39,8 @@ public class UserService {
 
     public LoginResponse login(LoginRequest loginRequest) {
 
-        User user = userRepository.findByUsername(loginRequest.getUsername()).orElseThrow(()
-                -> new AuthenticationException("Incorrect username or password"));
+        User user = userRepository.findByUsername(loginRequest.getUsername())
+                .orElseThrow(() -> new AuthenticationException("Incorrect username or password"));
 
         if (!passwordEncoder.matches(loginRequest.getPassword(), user.getPassword())) {
             throw new AuthenticationException("Incorrect username or password");
@@ -64,11 +64,11 @@ public class UserService {
             throw new UserAlreadyExistException("User already exist");
         }
 
-        Role role = roleRepository.findById(registrationRequest.getRoleId()).orElseThrow(()
-                -> new RoleNotFoundException("Role not found"));
+        Role role = roleRepository.findById(registrationRequest.getRoleId())
+                .orElseThrow(() -> new RoleNotFoundException("Role not found"));
 
-        Company company = companyRepository.findById(registrationRequest.getCompanyId()).orElseThrow(()
-                -> new CompanyNotFoundException("Company not found"));
+        Company company = companyRepository.findById(registrationRequest.getCompanyId())
+                .orElseThrow(() -> new CompanyNotFoundException("Company not found"));
 
         User user = userRepository.save(User.builder()
                 .username(registrationRequest.getUsername())
@@ -93,8 +93,8 @@ public class UserService {
 
         String userId = jwtTokenProvider.getUserId(token);
 
-        User user = userRepository.findUserById(Long.parseLong(userId)).orElseThrow(() ->
-                new UserNotFoundException("User not found"));
+        User user = userRepository.findUserById(Long.parseLong(userId))
+                .orElseThrow(() -> new UserNotFoundException("User not found"));
 
         if (!passwordEncoder.matches(changePasswordRequest.getOldPassword(), user.getPassword())) {
             throw new AuthenticationException("Incorrect password");

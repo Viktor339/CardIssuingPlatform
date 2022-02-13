@@ -40,7 +40,7 @@ public class JwtTokenProvider {
 
 
         Date now = new Date();
-        Date validity = new Date(now.getTime() + securityProperties.getAccessExpired());
+        Date validity = new Date(now.getTime() + securityProperties.getAccessExpired().getSeconds() * 1000);
 
         return Jwts.builder()
                 .setClaims(claims)
@@ -53,7 +53,7 @@ public class JwtTokenProvider {
     public String createRefreshToken() {
 
         Date now = new Date();
-        Date validity = new Date(now.getTime() + securityProperties.getRefreshExpired());
+        Date validity = new Date(now.getTime() + securityProperties.getRefreshExpired().getSeconds()*1000);
 
         return Jwts.builder()
                 .setIssuedAt(now)
