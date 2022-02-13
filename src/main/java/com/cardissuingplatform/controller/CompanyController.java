@@ -9,6 +9,7 @@ import com.cardissuingplatform.service.CompanyService;
 import com.cardissuingplatform.service.Page;
 import com.cardissuingplatform.service.PageService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -21,7 +22,8 @@ import javax.validation.Valid;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/company")
+@RequestMapping("/accountant/v1/companies")
+@PreAuthorize("hasRole('ADMIN')")
 public class CompanyController {
 
     private final CompanyService companyService;
