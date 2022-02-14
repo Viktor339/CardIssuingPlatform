@@ -111,14 +111,14 @@ public class RestExceptionHandler {
 
 
     @ExceptionHandler(JwtAuthenticationException.class)
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ResponseStatus(HttpStatus.FORBIDDEN)
     @ResponseBody
-    public ExceptionResponse handleJwtAuthenticationException(JwtAuthenticationException e) {
+    public ExceptionResponse handleJwtAuthenticationException(String e) {
         return ExceptionResponse.builder()
                 .timestamp(LocalDateTime.now())
-                .status(HttpStatus.BAD_REQUEST.value())
-                .error(HttpStatus.BAD_REQUEST.name())
-                .message(e.getMessage())
+                .status(HttpStatus.FORBIDDEN.value())
+                .error(HttpStatus.FORBIDDEN.name())
+                .message(e)
                 .build();
     }
 
