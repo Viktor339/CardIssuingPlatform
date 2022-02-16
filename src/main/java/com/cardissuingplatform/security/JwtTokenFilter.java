@@ -1,6 +1,8 @@
 package com.cardissuingplatform.security;
 
 import com.cardissuingplatform.controller.RestExceptionHandler;
+import com.cardissuingplatform.service.UserProvider;
+import com.cardissuingplatform.service.exception.AuthenticationException;
 import com.cardissuingplatform.service.exception.JwtAuthenticationException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -23,6 +25,7 @@ public class JwtTokenFilter extends GenericFilterBean {
 
     private final JwtTokenProvider jwtTokenProvider;
     private final RestExceptionHandler restExceptionHandler;
+    private final UserProvider userProvider;
 
     @Override
     public void doFilter(ServletRequest req, ServletResponse res, FilterChain filterChain) throws IOException, ServletException, JwtAuthenticationException {
@@ -31,6 +34,11 @@ public class JwtTokenFilter extends GenericFilterBean {
         try {
             if (token != null) {
                 jwtTokenProvider.validateToken(token);
+
+                if (!userProvider.checkEnabled(jwtTokenProvider.getUserId(token))) {
+                    throw new AuthenticationException("User is disabled");
+                }
+
                 Authentication auth = jwtTokenProvider.getAuthentication(token);
 
                 auth.setAuthenticated(true);
@@ -38,14 +46,13 @@ public class JwtTokenFilter extends GenericFilterBean {
             }
             filterChain.doFilter(req, res);
 
-        }
-        catch (JwtAuthenticationException ex) {
+        } catch (JwtAuthenticationException | AuthenticationException ex) {
 
             HttpServletResponse response = (HttpServletResponse) res;
-            response.setStatus(HttpStatus.PRECONDITION_FAILED.value());
+            response.setStatus(HttpStatus.FORBIDDEN.value());
 
             response.getWriter().
-                    write(restExceptionHandler.handleJwtAuthenticationException(ex).toString());
+                    write(restExceptionHandler.handleJwtAuthenticationException(ex.getMessage()).toString());
         }
     }
 }

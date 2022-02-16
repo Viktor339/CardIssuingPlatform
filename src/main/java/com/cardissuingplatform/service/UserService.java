@@ -39,7 +39,7 @@ public class UserService {
 
     public LoginResponse login(LoginRequest loginRequest) {
 
-        User user = userRepository.findByUsername(loginRequest.getUsername())
+        User user = userRepository.findByEmail(loginRequest.getEmail())
                 .orElseThrow(() -> new AuthenticationException("Incorrect username or password"));
 
         if (!passwordEncoder.matches(loginRequest.getPassword(), user.getPassword())) {

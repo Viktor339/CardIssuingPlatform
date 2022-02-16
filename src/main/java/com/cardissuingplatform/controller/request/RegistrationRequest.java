@@ -1,5 +1,6 @@
 package com.cardissuingplatform.controller.request;
 
+import lombok.Builder;
 import lombok.Data;
 import org.springframework.format.annotation.DateTimeFormat;
 
@@ -8,6 +9,7 @@ import javax.validation.constraints.NotBlank;
 import java.time.LocalDate;
 
 @Data
+@Builder(toBuilder = true)
 public class RegistrationRequest {
     @NotBlank
     private String username;
