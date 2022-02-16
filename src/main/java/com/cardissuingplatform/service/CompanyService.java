@@ -14,6 +14,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
@@ -54,7 +55,7 @@ public class CompanyService {
     }
 
 
-    public Page<GetCompanyResponse> get(Integer size, Integer page, String sort) {
+    public List<GetCompanyResponse> get(Integer size, Integer page, String sort) {
 
         Pageable pageable = PageRequest.of(page, size, Sort.by("name").ascending());
 
@@ -62,13 +63,13 @@ public class CompanyService {
             pageable = PageRequest.of(page, size, Sort.by("name").descending());
         }
 
-        return new Page<>(companyRepository.findAll(pageable)
+        return companyRepository.findAll(pageable)
                 .stream()
                 .map(company -> GetCompanyResponse
                         .builder()
                         .id(company.getId())
                         .name(company.getName())
                         .isEnabled(company.isEnabled())
-                        .build()).collect(Collectors.toList()));
+                        .build()).collect(Collectors.toList());
     }
 }
