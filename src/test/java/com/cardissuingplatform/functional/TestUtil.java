@@ -7,8 +7,9 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 public class TestUtil {
 
     public static String objectToJson(Object object) throws JsonProcessingException {
-        return new ObjectMapper().writeValueAsString(object);
+        return new ObjectMapper().registerModule(new JavaTimeModule()).writeValueAsString(object);
     }
+
     public static ObjectMapper getObjectMapper() {
         return new ObjectMapper().registerModule(new JavaTimeModule());
     }

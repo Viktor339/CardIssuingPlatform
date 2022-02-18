@@ -6,6 +6,7 @@ import com.cardissuingplatform.controller.request.RegistrationRequest;
 import com.cardissuingplatform.controller.response.ChangePasswordResponse;
 import com.cardissuingplatform.controller.response.LoginResponse;
 import com.cardissuingplatform.controller.response.RegistrationResponse;
+import com.cardissuingplatform.model.annotation.Token;
 import com.cardissuingplatform.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -40,7 +41,7 @@ public class UserController {
 
     @PreAuthorize("hasRole('USER') or hasRole('ADMIN') or hasRole('ACCOUNTANT')")
     @PatchMapping("/password/change")
-    public ChangePasswordResponse changePassword(@RequestBody @Validated ChangePasswordRequest changePasswordRequest) {
-        return userService.changePassword(changePasswordRequest);
+    public ChangePasswordResponse changePassword(@RequestBody @Validated ChangePasswordRequest changePasswordRequest, @Token String token) {
+        return userService.changePassword(changePasswordRequest,token);
     }
 }

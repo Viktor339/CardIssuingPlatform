@@ -13,14 +13,12 @@ import com.cardissuingplatform.repository.RoleRepository;
 import com.cardissuingplatform.repository.UserRepository;
 import com.cardissuingplatform.security.JwtTokenProvider;
 import com.cardissuingplatform.service.exception.RoleNotFoundException;
-import com.cardissuingplatform.service.exception.UserNotBelongToTheCompany;
+import com.cardissuingplatform.service.exception.UserNotBelongToTheCompanyException;
 import com.cardissuingplatform.service.exception.UserNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -38,20 +36,16 @@ public class AuthorityService {
     private final ConverterService converterService;
 
     @Transactional
-    public ChangeAuthorityResponse change(ChangeAuthorityRequest changeAuthorityRequest) {
-
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String token = authentication.getPrincipal().toString();
+    public ChangeAuthorityResponse change(ChangeAuthorityRequest changeAuthorityRequest,String token) {
 
         String accountantId = jwtTokenProvider.getUserId(token);
 
-        User accountant = userRepository.findUserById(Long.parseLong(accountantId))
-                .orElseThrow(() -> new UserNotFoundException("Accountant not found"));
+        User accountant = userRepository.getUserById(Long.parseLong(accountantId));
         User user = userRepository.findUserById(changeAuthorityRequest.getUserId())
                 .orElseThrow(() -> new UserNotFoundException("User not found"));
 
         if (!accountant.getCompany().equals(user.getCompany())) {
-            throw new UserNotBelongToTheCompany("User not belong to the company");
+            throw new UserNotBelongToTheCompanyException("User not belong to the company");
         }
 
         authorityRepository.deleteAllByUser(user);
@@ -77,15 +71,11 @@ public class AuthorityService {
     }
 
     @Transactional
-    public List<GetAuthorityResponse> get(Integer size, Integer page) {
-
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String token = authentication.getPrincipal().toString();
+    public List<GetAuthorityResponse> get(Integer size, Integer page,String token) {
 
         String accountantId = jwtTokenProvider.getUserId(token);
 
-        User accountant = userRepository.findUserById(Long.parseLong(accountantId))
-                .orElseThrow(() -> new UserNotFoundException("Accountant not found"));
+        User accountant = userRepository.getUserById(Long.parseLong(accountantId));
 
         Role role = roleRepository.findByRoleName("ROLE_USER")
                 .orElseThrow(() -> new RoleNotFoundException("Role not found"));

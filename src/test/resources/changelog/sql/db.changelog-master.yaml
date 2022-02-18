@@ -4,6 +4,8 @@ databaseChangeLog:
   - include:
       file: changelog/sql/insert_roles_to_role_table.sql
   - include:
+      file: changelog/sql/create_authority_table.sql
+  - include:
       file: changelog/sql/test/insert_companies_to_companie_table.sql
   - include:
       file: changelog/sql/test/inser_users_to_user_table.sql
@@ -11,3 +13,5 @@ databaseChangeLog:
       file: changelog/sql/test/insert_cards_to_cards_table.sql
   - include:
       file: changelog/sql/test/insert_card_status_to_card_status_table.sql
+  - include:
+      file: changelog/sql/test/insert_authorities_to_authority_table.sql

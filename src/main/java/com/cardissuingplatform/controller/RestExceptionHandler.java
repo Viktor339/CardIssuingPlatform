@@ -6,8 +6,9 @@ import com.cardissuingplatform.service.exception.CompanyAlreadyExistsException;
 import com.cardissuingplatform.service.exception.CompanyNotFoundException;
 import com.cardissuingplatform.service.exception.ExceptionResponse;
 import com.cardissuingplatform.service.exception.JwtAuthenticationException;
+import com.cardissuingplatform.service.exception.RoleNotFoundException;
 import com.cardissuingplatform.service.exception.UserAlreadyExistException;
-import com.cardissuingplatform.service.exception.UserNotBelongToTheCompany;
+import com.cardissuingplatform.service.exception.UserNotBelongToTheCompanyException;
 import com.cardissuingplatform.service.exception.UserNotFoundException;
 import com.cardissuingplatform.service.exception.ValidatorPageException;
 import org.springframework.http.HttpStatus;
@@ -126,7 +127,6 @@ public class RestExceptionHandler {
     }
 
 
-
     @ExceptionHandler(AuthenticationException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ResponseBody
@@ -176,10 +176,22 @@ public class RestExceptionHandler {
                 .build();
     }
 
-    @ExceptionHandler(UserNotBelongToTheCompany.class)
+    @ExceptionHandler(UserNotBelongToTheCompanyException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
     @ResponseBody
-    public ExceptionResponse handleUserNotBelongToTheCompany(UserNotBelongToTheCompany e) {
+    public ExceptionResponse handleUserNotBelongToTheCompany(UserNotBelongToTheCompanyException e) {
+        return ExceptionResponse.builder()
+                .timestamp(LocalDateTime.now())
+                .status(HttpStatus.NOT_FOUND.value())
+                .error(HttpStatus.NOT_FOUND.name())
+                .message(e.getMessage())
+                .build();
+    }
+
+    @ExceptionHandler(RoleNotFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    @ResponseBody
+    public ExceptionResponse handleRoleNotFoundException(RoleNotFoundException e) {
         return ExceptionResponse.builder()
                 .timestamp(LocalDateTime.now())
                 .status(HttpStatus.NOT_FOUND.value())

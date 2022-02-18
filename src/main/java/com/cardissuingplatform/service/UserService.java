@@ -16,10 +16,7 @@ import com.cardissuingplatform.service.exception.AuthenticationException;
 import com.cardissuingplatform.service.exception.CompanyNotFoundException;
 import com.cardissuingplatform.service.exception.RoleNotFoundException;
 import com.cardissuingplatform.service.exception.UserAlreadyExistException;
-import com.cardissuingplatform.service.exception.UserNotFoundException;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -86,15 +83,11 @@ public class UserService {
     }
 
     @Transactional
-    public ChangePasswordResponse changePassword(ChangePasswordRequest changePasswordRequest) {
-
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String token = authentication.getPrincipal().toString();
+    public ChangePasswordResponse changePassword(ChangePasswordRequest changePasswordRequest, String token) {
 
         String userId = jwtTokenProvider.getUserId(token);
 
-        User user = userRepository.findUserById(Long.parseLong(userId))
-                .orElseThrow(() -> new UserNotFoundException("User not found"));
+        User user = userRepository.getUserById(Long.parseLong(userId));
 
         if (!passwordEncoder.matches(changePasswordRequest.getOldPassword(), user.getPassword())) {
             throw new AuthenticationException("Incorrect password");
