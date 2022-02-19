@@ -1,10 +1,10 @@
 package com.cardissuingplatform.functional.controller;
 
-import com.cardissuingplatform.functional.IntegrationTestBase;
 import com.cardissuingplatform.controller.dto.ChangeCompanyResponse;
 import com.cardissuingplatform.controller.request.ChangeCompanyRequest;
 import com.cardissuingplatform.controller.request.CreateCompanyRequest;
 import com.cardissuingplatform.controller.response.GetCompanyResponse;
+import com.cardissuingplatform.functional.IntegrationTestBase;
 import com.cardissuingplatform.service.exception.CompanyAlreadyExistsException;
 import com.cardissuingplatform.service.exception.CompanyNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
@@ -24,6 +24,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 public class CompanyControllerTest extends IntegrationTestBase {
+
+    private static final String TOKEN = "Bearer_eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbiIsInJvbGVzIjpbIlJPTEVfQURNSU4iXSwidXNlcklkIjozLCJjb21wYW55SWQiOnsiaWQiOjEsIm5hbWUiOiJBIiwiZW5hYmxlZCI6dHJ1ZX0sImlhdCI6MTY0NTA5MTI4OSwiZXhwIjo4ODA0NTAwNDg4OX0.l3fBwfC30b1Ih000Ie_p4PB4dSHsOGGyDC3h-GHw458";
 
     @Autowired
     private MockMvc mockMvc;
@@ -60,9 +62,10 @@ public class CompanyControllerTest extends IntegrationTestBase {
     @Test
     public void testCreateShouldThrowCompanyAlreadyExistsException() throws Exception {
 
-        mockMvc.perform(post("/company")
+        mockMvc.perform(post("/accountant/v1/companies")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectToJson(createCompanyRequest))
+                        .header("Authorization", TOKEN)
                 ).andDo(print())
                 .andExpect(status().is4xxClientError())
                 .andExpect(result -> assertTrue(result.getResolvedException() instanceof CompanyAlreadyExistsException));
@@ -73,9 +76,10 @@ public class CompanyControllerTest extends IntegrationTestBase {
 
         createCompanyRequest.setName("F");
 
-        mockMvc.perform(post("/company")
+        mockMvc.perform(post("/accountant/v1/companies")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectToJson(createCompanyRequest))
+                        .header("Authorization", TOKEN)
                 ).andDo(print())
                 .andExpect(status().isOk());
     }
@@ -85,9 +89,10 @@ public class CompanyControllerTest extends IntegrationTestBase {
 
         changeCompanyRequest.setName("D");
 
-        mockMvc.perform(patch("/company")
+        mockMvc.perform(patch("/accountant/v1/companies")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectToJson(changeCompanyRequest))
+                        .header("Authorization", TOKEN)
                 ).andDo(print())
                 .andExpect(status().is4xxClientError())
                 .andExpect(result -> assertTrue(result.getResolvedException() instanceof CompanyNotFoundException));
@@ -97,9 +102,10 @@ public class CompanyControllerTest extends IntegrationTestBase {
     @Test
     public void testChangeCompanyShouldReturnChangeCompanyDto() throws Exception {
 
-        mockMvc.perform(patch("/company")
+        mockMvc.perform(patch("/accountant/v1/companies")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectToJson(changeCompanyRequest))
+                        .header("Authorization", TOKEN)
                 ).andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().string(containsString(objectToJson(changeCompanyResponse))));
@@ -109,8 +115,9 @@ public class CompanyControllerTest extends IntegrationTestBase {
     @Test
     public void testGetShouldReturnPage() throws Exception {
 
-        mockMvc.perform(get("/company")
+        mockMvc.perform(get("/accountant/v1/companies")
                         .param("page", "0")
+                        .header("Authorization", TOKEN)
                 ).andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().string(containsString(objectToJson(getCompanyResponse))));
