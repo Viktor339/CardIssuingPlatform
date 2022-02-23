@@ -3,6 +3,7 @@ package com.cardissuingplatform.config;
 
 import com.google.common.cache.CacheBuilder;
 import lombok.RequiredArgsConstructor;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.CachingConfigurer;
@@ -14,6 +15,9 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 @EnableCaching
 @RequiredArgsConstructor
+@ConditionalOnProperty(
+        value = "cache.enabled"
+)
 public class CacheConfig implements CachingConfigurer {
 
     private final CacheProperties cacheProperties;

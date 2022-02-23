@@ -18,6 +18,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 public class CardControllerTest extends IntegrationTestBase {
+
+    private static final String TOKEN = "Bearer_eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhY2NvdW50YW50Iiwicm9sZXMiOlsiUk9MRV9BQ0NPVU5UQU5UIl0sInVzZXJJZCI6NCwiY29tcGFueUlkIjp7ImlkIjoxLCJuYW1lIjoiQSIsImVuYWJsZWQiOnRydWV9LCJpYXQiOjE2NDUwOTE5NzEsImV4cCI6ODgwNDUwMDU1NzF9.icR_YN95S831SXCOcv7MIJBiJc2q1hkXPZUPsiwdnDg";
+
     @Autowired
     private MockMvc mockMvc;
 
@@ -40,6 +43,7 @@ public class CardControllerTest extends IntegrationTestBase {
                         .param("isActive", "true")
                         .param("page", "0")
                         .param("status", "100")
+                        .header("Authorization", TOKEN)
                 ).andDo(print())
                 .andExpect(status().isOk())
                 .andReturn().getResponse().getContentAsString();
