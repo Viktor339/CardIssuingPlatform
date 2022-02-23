@@ -41,6 +41,7 @@ jwt:
 cache:
   timeToLive: 10m
   maxSize: 10000
+  enabled: true
 
 
 
