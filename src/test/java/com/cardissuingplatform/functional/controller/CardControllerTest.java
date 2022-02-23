@@ -2,7 +2,6 @@ package com.cardissuingplatform.functional.controller;
 
 import com.cardissuingplatform.controller.response.GetCardResponse;
 import com.cardissuingplatform.functional.IntegrationTestBase;
-import com.cardissuingplatform.functional.TestUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -25,6 +24,8 @@ public class CardControllerTest extends IntegrationTestBase {
     private MockMvc mockMvc;
 
     private GetCardResponse getCardResponse;
+    @Autowired
+    private ObjectMapper objectMapper;
 
     @BeforeEach
     public void setUp() {
@@ -47,8 +48,6 @@ public class CardControllerTest extends IntegrationTestBase {
                 ).andDo(print())
                 .andExpect(status().isOk())
                 .andReturn().getResponse().getContentAsString();
-
-        ObjectMapper objectMapper = TestUtil.getObjectMapper();
 
         GetCardResponse expect = List.of(objectMapper.readValue(contentAsString, GetCardResponse[].class)).get(0);
 

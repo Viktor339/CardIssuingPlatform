@@ -1,5 +1,6 @@
 package com.cardissuingplatform.unit;
 
+import com.cardissuingplatform.controller.dto.TokenDto;
 import com.cardissuingplatform.controller.request.ChangePasswordRequest;
 import com.cardissuingplatform.controller.request.LoginRequest;
 import com.cardissuingplatform.controller.request.RegistrationRequest;
@@ -48,7 +49,6 @@ class UserServiceTest {
     private static final String EMAIL = "email";
     private static final String USERNAME = "username";
     private static final String DATE = "1999-12-12";
-    private static final String TOKEN = "token";
 
 
     @InjectMocks
@@ -72,6 +72,7 @@ class UserServiceTest {
     private User user;
     private Company company;
     private Role role;
+    private TokenDto tokenDto;
 
     @BeforeEach
     void setUp() {
@@ -117,6 +118,9 @@ class UserServiceTest {
 
         changePasswordResponse = ChangePasswordResponse.builder()
                 .userId(user.getId())
+                .build();
+        tokenDto = TokenDto.builder()
+                .userId("1")
                 .build();
     }
 
@@ -225,13 +229,11 @@ class UserServiceTest {
     @Test
     void changePassword() {
 
-        when(jwtTokenProvider.getUserId(any(String.class))).thenReturn("1");
         when(userRepository.getUserById(any(Long.class))).thenReturn(user);
         when(passwordEncoder.matches(changePasswordRequest.getOldPassword(), user.getPassword())).thenReturn(true);
 
-        assertEquals(changePasswordResponse, userService.changePassword(changePasswordRequest, TOKEN));
+        assertEquals(changePasswordResponse, userService.changePassword(changePasswordRequest, tokenDto));
 
-        verify(jwtTokenProvider, times(1)).getUserId(argThat(token -> token.equals(TOKEN)));
         verify(userRepository, times(1)).getUserById(argThat(userId -> userId.equals(1L)));
         verify(passwordEncoder, times(1)).matches(argThat(pass -> pass.equals(PASSWORD)),
                 argThat(userPass -> userPass.equals(PASSWORD)));
@@ -243,13 +245,11 @@ class UserServiceTest {
     @Test
     void changePasswordShouldThrowAuthenticationException() {
 
-        when(jwtTokenProvider.getUserId(any(String.class))).thenReturn("1");
         when(userRepository.getUserById(any(Long.class))).thenReturn(user);
         when(passwordEncoder.matches(changePasswordRequest.getOldPassword(), user.getPassword())).thenReturn(false);
 
-        assertThrows(AuthenticationException.class, () -> userService.changePassword(changePasswordRequest, TOKEN));
+        assertThrows(AuthenticationException.class, () -> userService.changePassword(changePasswordRequest, tokenDto));
 
-        verify(jwtTokenProvider, times(1)).getUserId(argThat(token -> token.equals(TOKEN)));
         verify(userRepository, times(1)).getUserById(argThat(userId -> userId.equals(1L)));
         verify(passwordEncoder, times(1)).matches(argThat(pass -> pass.equals(PASSWORD)),
                 argThat(userPass -> userPass.equals(PASSWORD)));

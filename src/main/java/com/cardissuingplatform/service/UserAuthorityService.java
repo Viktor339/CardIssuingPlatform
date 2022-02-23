@@ -10,14 +10,14 @@ import java.util.List;
 @Service
 public class UserAuthorityService {
 
-    public void validateAuthority(ChangeAuthorityRequest changeAuthorityRequest){
+    public void validateAuthority(ChangeAuthorityRequest changeAuthorityRequest) {
 
         List<ChangeAuthorityRequest.Authority> authorities = changeAuthorityRequest.getAuthorities();
 
         authorities.stream().filter(authority -> authority.name().equals(
-
-                Authority.AuthorityEnum.valueOf(authority.name()).name())
-        ).findFirst().orElseThrow(() -> new AuthorityNotFoundException("Authority not found"));
+                        Authority.AuthorityEnum.valueOf(authority.name()).name()))
+                .findFirst()
+                .orElseThrow(() -> new AuthorityNotFoundException("Authority not found"));
 
     }
 }

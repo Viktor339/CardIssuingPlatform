@@ -1,5 +1,6 @@
 package com.cardissuingplatform.controller;
 
+import com.cardissuingplatform.controller.dto.TokenDto;
 import com.cardissuingplatform.controller.request.ChangePasswordRequest;
 import com.cardissuingplatform.controller.request.LoginRequest;
 import com.cardissuingplatform.controller.request.RegistrationRequest;
@@ -41,7 +42,7 @@ public class UserController {
 
     @PreAuthorize("hasRole('USER') or hasRole('ADMIN') or hasRole('ACCOUNTANT')")
     @PatchMapping("/password/change")
-    public ChangePasswordResponse changePassword(@RequestBody @Validated ChangePasswordRequest changePasswordRequest, @Token String token) {
+    public ChangePasswordResponse changePassword(@RequestBody @Validated ChangePasswordRequest changePasswordRequest, @Token TokenDto token) {
         return userService.changePassword(changePasswordRequest,token);
     }
 }

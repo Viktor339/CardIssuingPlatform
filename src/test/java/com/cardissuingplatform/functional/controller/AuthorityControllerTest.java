@@ -4,7 +4,6 @@ import com.cardissuingplatform.controller.request.ChangeAuthorityRequest;
 import com.cardissuingplatform.controller.response.ChangeAuthorityResponse;
 import com.cardissuingplatform.controller.response.GetAuthorityResponse;
 import com.cardissuingplatform.functional.IntegrationTestBase;
-import com.cardissuingplatform.functional.TestUtil;
 import com.cardissuingplatform.service.exception.UserNotBelongToTheCompanyException;
 import com.cardissuingplatform.service.exception.UserNotFoundException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -17,7 +16,6 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import java.util.List;
 
-import static com.cardissuingplatform.functional.TestUtil.objectToJson;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
@@ -34,6 +32,8 @@ class AuthorityControllerTest extends IntegrationTestBase {
     private ChangeAuthorityRequest changeAuthorityRequest;
     private ChangeAuthorityResponse changeAuthorityResponse;
     private GetAuthorityResponse getAuthorityResponse;
+    @Autowired
+    private ObjectMapper objectMapper;
 
     @BeforeEach
     void setUp() {
@@ -59,13 +59,12 @@ class AuthorityControllerTest extends IntegrationTestBase {
 
         String contentAsString = mockMvc.perform(put("/accountant/v1/users/authorities")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectToJson(changeAuthorityRequest))
+                        .content(objectMapper.writeValueAsString(changeAuthorityRequest))
                         .header("Authorization", TOKEN)
                 ).andDo(print())
                 .andExpect(status().isOk())
                 .andReturn().getResponse().getContentAsString();
 
-        ObjectMapper objectMapper = TestUtil.getObjectMapper();
         ChangeAuthorityResponse changeAuthorityResponse = objectMapper.readValue(contentAsString, ChangeAuthorityResponse.class);
 
         assertEquals(changeAuthorityResponse, this.changeAuthorityResponse);
@@ -79,7 +78,7 @@ class AuthorityControllerTest extends IntegrationTestBase {
 
         mockMvc.perform(put("/accountant/v1/users/authorities")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectToJson(changeAuthorityRequest))
+                        .content(objectMapper.writeValueAsString(changeAuthorityRequest))
                         .header("Authorization", TOKEN)
                 ).andDo(print())
                 .andExpect(status().is4xxClientError())
@@ -94,7 +93,7 @@ class AuthorityControllerTest extends IntegrationTestBase {
 
         mockMvc.perform(put("/accountant/v1/users/authorities")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectToJson(changeAuthorityRequest))
+                        .content(objectMapper.writeValueAsString(changeAuthorityRequest))
                         .header("Authorization", TOKEN)
                 ).andDo(print())
                 .andExpect(status().is4xxClientError())
@@ -114,8 +113,6 @@ class AuthorityControllerTest extends IntegrationTestBase {
                 ).andDo(print())
                 .andExpect(status().isOk())
                 .andReturn().getResponse().getContentAsString();
-
-        ObjectMapper objectMapper = TestUtil.getObjectMapper();
 
         GetAuthorityResponse expect = List.of(objectMapper.readValue(contentAsString, GetAuthorityResponse[].class)).get(0);
 

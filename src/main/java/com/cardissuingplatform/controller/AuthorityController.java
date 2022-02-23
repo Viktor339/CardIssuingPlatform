@@ -1,6 +1,7 @@
 package com.cardissuingplatform.controller;
 
 import com.cardissuingplatform.config.PageProperties;
+import com.cardissuingplatform.controller.dto.TokenDto;
 import com.cardissuingplatform.controller.request.ChangeAuthorityRequest;
 import com.cardissuingplatform.controller.response.ChangeAuthorityResponse;
 import com.cardissuingplatform.controller.response.GetAuthorityResponse;
@@ -32,7 +33,7 @@ public class AuthorityController {
 
 
     @PutMapping
-    public ChangeAuthorityResponse change(@Valid @RequestBody ChangeAuthorityRequest changeAuthorityRequest, @Token String token) {
+    public ChangeAuthorityResponse change(@Valid @RequestBody ChangeAuthorityRequest changeAuthorityRequest, @Token TokenDto token) {
 
         userAuthorityService.validateAuthority(changeAuthorityRequest);
         return authorityService.change(changeAuthorityRequest, token);
@@ -41,7 +42,7 @@ public class AuthorityController {
 
     @GetMapping
     public List<GetAuthorityResponse> get(@RequestParam(name = "size") Integer size,
-                                          @RequestParam("page") Integer page, @Token String token) {
+                                          @RequestParam("page") Integer page, @Token TokenDto token) {
 
         Integer validatedSize = pageService.validatePageSize(size, pageProperties.getMin(), pageProperties.getMax());
         return authorityService.get(validatedSize, page, token);

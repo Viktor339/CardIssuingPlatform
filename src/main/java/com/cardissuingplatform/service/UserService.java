@@ -1,5 +1,6 @@
 package com.cardissuingplatform.service;
 
+import com.cardissuingplatform.controller.dto.TokenDto;
 import com.cardissuingplatform.controller.request.ChangePasswordRequest;
 import com.cardissuingplatform.controller.request.LoginRequest;
 import com.cardissuingplatform.controller.request.RegistrationRequest;
@@ -83,9 +84,9 @@ public class UserService {
     }
 
     @Transactional
-    public ChangePasswordResponse changePassword(ChangePasswordRequest changePasswordRequest, String token) {
+    public ChangePasswordResponse changePassword(ChangePasswordRequest changePasswordRequest, TokenDto tokenDto) {
 
-        String userId = jwtTokenProvider.getUserId(token);
+        String userId = tokenDto.getUserId();
 
         User user = userRepository.getUserById(Long.parseLong(userId));
 

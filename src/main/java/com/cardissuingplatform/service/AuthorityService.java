@@ -1,5 +1,6 @@
 package com.cardissuingplatform.service;
 
+import com.cardissuingplatform.controller.dto.TokenDto;
 import com.cardissuingplatform.controller.request.ChangeAuthorityRequest;
 import com.cardissuingplatform.controller.response.ChangeAuthorityResponse;
 import com.cardissuingplatform.controller.response.GetAuthorityResponse;
@@ -11,7 +12,6 @@ import com.cardissuingplatform.model.User_;
 import com.cardissuingplatform.repository.AuthorityRepository;
 import com.cardissuingplatform.repository.RoleRepository;
 import com.cardissuingplatform.repository.UserRepository;
-import com.cardissuingplatform.security.JwtTokenProvider;
 import com.cardissuingplatform.service.exception.RoleNotFoundException;
 import com.cardissuingplatform.service.exception.UserNotBelongToTheCompanyException;
 import com.cardissuingplatform.service.exception.UserNotFoundException;
@@ -30,15 +30,14 @@ import java.util.stream.Collectors;
 @Service
 public class AuthorityService {
     private final UserRepository userRepository;
-    private final JwtTokenProvider jwtTokenProvider;
     private final AuthorityRepository authorityRepository;
     private final RoleRepository roleRepository;
     private final ConverterService converterService;
 
     @Transactional
-    public ChangeAuthorityResponse change(ChangeAuthorityRequest changeAuthorityRequest,String token) {
+    public ChangeAuthorityResponse change(ChangeAuthorityRequest changeAuthorityRequest, TokenDto tokenDto) {
 
-        String accountantId = jwtTokenProvider.getUserId(token);
+        String accountantId = tokenDto.getUserId();
 
         User accountant = userRepository.getUserById(Long.parseLong(accountantId));
         User user = userRepository.findUserById(changeAuthorityRequest.getUserId())
@@ -71,9 +70,9 @@ public class AuthorityService {
     }
 
     @Transactional
-    public List<GetAuthorityResponse> get(Integer size, Integer page,String token) {
+    public List<GetAuthorityResponse> get(Integer size, Integer page, TokenDto tokenDto) {
 
-        String accountantId = jwtTokenProvider.getUserId(token);
+        String accountantId = tokenDto.getUserId();
 
         User accountant = userRepository.getUserById(Long.parseLong(accountantId));
 

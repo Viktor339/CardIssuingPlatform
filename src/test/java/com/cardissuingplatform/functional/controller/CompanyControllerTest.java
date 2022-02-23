@@ -7,13 +7,13 @@ import com.cardissuingplatform.controller.response.GetCompanyResponse;
 import com.cardissuingplatform.functional.IntegrationTestBase;
 import com.cardissuingplatform.service.exception.CompanyAlreadyExistsException;
 import com.cardissuingplatform.service.exception.CompanyNotFoundException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
-import static com.cardissuingplatform.functional.TestUtil.objectToJson;
 import static org.hamcrest.Matchers.containsString;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -34,6 +34,8 @@ public class CompanyControllerTest extends IntegrationTestBase {
     private ChangeCompanyRequest changeCompanyRequest;
     private ChangeCompanyResponse changeCompanyResponse;
     private GetCompanyResponse getCompanyResponse;
+    @Autowired
+    private ObjectMapper objectMapper;
 
     @BeforeEach
     public void setUp() {
@@ -64,7 +66,7 @@ public class CompanyControllerTest extends IntegrationTestBase {
 
         mockMvc.perform(post("/accountant/v1/companies")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectToJson(createCompanyRequest))
+                        .content(objectMapper.writeValueAsString(createCompanyRequest))
                         .header("Authorization", TOKEN)
                 ).andDo(print())
                 .andExpect(status().is4xxClientError())
@@ -78,7 +80,7 @@ public class CompanyControllerTest extends IntegrationTestBase {
 
         mockMvc.perform(post("/accountant/v1/companies")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectToJson(createCompanyRequest))
+                        .content(objectMapper.writeValueAsString(createCompanyRequest))
                         .header("Authorization", TOKEN)
                 ).andDo(print())
                 .andExpect(status().isOk());
@@ -91,7 +93,7 @@ public class CompanyControllerTest extends IntegrationTestBase {
 
         mockMvc.perform(patch("/accountant/v1/companies")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectToJson(changeCompanyRequest))
+                        .content(objectMapper.writeValueAsString(changeCompanyRequest))
                         .header("Authorization", TOKEN)
                 ).andDo(print())
                 .andExpect(status().is4xxClientError())
@@ -104,11 +106,11 @@ public class CompanyControllerTest extends IntegrationTestBase {
 
         mockMvc.perform(patch("/accountant/v1/companies")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectToJson(changeCompanyRequest))
+                        .content(objectMapper.writeValueAsString(changeCompanyRequest))
                         .header("Authorization", TOKEN)
                 ).andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(content().string(containsString(objectToJson(changeCompanyResponse))));
+                .andExpect(content().string(containsString(objectMapper.writeValueAsString(changeCompanyResponse))));
     }
 
 
@@ -120,7 +122,7 @@ public class CompanyControllerTest extends IntegrationTestBase {
                         .header("Authorization", TOKEN)
                 ).andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(content().string(containsString(objectToJson(getCompanyResponse))));
+                .andExpect(content().string(containsString(objectMapper.writeValueAsString(getCompanyResponse))));
     }
 }
 

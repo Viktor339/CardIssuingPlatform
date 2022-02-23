@@ -1,5 +1,6 @@
 package com.cardissuingplatform.unit;
 
+import com.cardissuingplatform.controller.dto.TokenDto;
 import com.cardissuingplatform.controller.request.ChangeAuthorityRequest;
 import com.cardissuingplatform.controller.response.ChangeAuthorityResponse;
 import com.cardissuingplatform.controller.response.GetAuthorityResponse;
@@ -9,7 +10,6 @@ import com.cardissuingplatform.model.User;
 import com.cardissuingplatform.repository.AuthorityRepository;
 import com.cardissuingplatform.repository.RoleRepository;
 import com.cardissuingplatform.repository.UserRepository;
-import com.cardissuingplatform.security.JwtTokenProvider;
 import com.cardissuingplatform.service.AuthorityService;
 import com.cardissuingplatform.service.ConverterService;
 import com.cardissuingplatform.service.exception.RoleNotFoundException;
@@ -37,8 +37,6 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 class AuthorityServiceTest {
 
-    private static final String ACCOUNTANT_ID = "1";
-    private static final String TOKEN = "token";
     private static final Integer SIZE = 1;
     private static final Integer PAGE = 0;
     private static final String ROLE_USER = "ROLE_USER";
@@ -49,8 +47,6 @@ class AuthorityServiceTest {
 
     @Mock
     private UserRepository userRepository;
-    @Mock
-    private JwtTokenProvider jwtTokenProvider;
     @Mock
     private AuthorityRepository authorityRepository;
     @Mock
@@ -67,6 +63,7 @@ class AuthorityServiceTest {
     private List<User> users;
     private List<GetAuthorityResponse> getAuthorityResponses;
     private GetAuthorityResponse getAuthorityResponse;
+    private TokenDto tokenDto;
 
     @BeforeEach
     void setUp() {
@@ -108,18 +105,19 @@ class AuthorityServiceTest {
         getAuthorityResponses = List.of(getAuthorityResponse);
 
 
+        tokenDto = TokenDto.builder()
+                .userId("1")
+                .build();
     }
 
     @Test
     void change() {
 
-        when(jwtTokenProvider.getUserId(any(String.class))).thenReturn(ACCOUNTANT_ID);
         when(userRepository.getUserById(any(Long.class))).thenReturn(accountant);
         when(userRepository.findUserById(changeAuthorityRequest.getUserId())).thenReturn(Optional.of(user));
 
-        assertEquals(changeAuthorityResponse, authorityService.change(changeAuthorityRequest, TOKEN));
+        assertEquals(changeAuthorityResponse, authorityService.change(changeAuthorityRequest, tokenDto));
 
-        verify(jwtTokenProvider, times(1)).getUserId(argThat(id -> id.equals(TOKEN)));
         verify(userRepository, times(1)).getUserById(argThat(id -> id == 1));
         verify(userRepository, times(1)).findUserById(argThat(id -> id == 2));
         verify(authorityRepository, times(1)).deleteAllByUser(argThat(user -> user.equals(this.user)));
@@ -131,13 +129,11 @@ class AuthorityServiceTest {
     @Test
     void changeShouldThrowUserNotFoundExceptionByAdmin() {
 
-        when(jwtTokenProvider.getUserId(any(String.class))).thenReturn(ACCOUNTANT_ID);
         when(userRepository.getUserById(any(Long.class))).thenReturn(accountant);
         when(userRepository.findUserById(changeAuthorityRequest.getUserId())).thenReturn(Optional.empty());
 
-        assertThrows(UserNotFoundException.class, () -> authorityService.change(changeAuthorityRequest, TOKEN));
+        assertThrows(UserNotFoundException.class, () -> authorityService.change(changeAuthorityRequest, tokenDto));
 
-        verify(jwtTokenProvider, times(1)).getUserId(argThat(id -> id.equals(TOKEN)));
         verify(userRepository, times(1)).getUserById(argThat(id -> id == 1));
         verify(userRepository, times(1)).findUserById(argThat(id -> id == 2));
 
@@ -151,13 +147,11 @@ class AuthorityServiceTest {
                 .id(2L)
                 .build());
 
-        when(jwtTokenProvider.getUserId(any(String.class))).thenReturn(ACCOUNTANT_ID);
         when(userRepository.getUserById(any(Long.class))).thenReturn(accountant);
         when(userRepository.findUserById(changeAuthorityRequest.getUserId())).thenReturn(Optional.of(user));
 
-        assertThrows(UserNotBelongToTheCompanyException.class, () -> authorityService.change(changeAuthorityRequest, TOKEN));
+        assertThrows(UserNotBelongToTheCompanyException.class, () -> authorityService.change(changeAuthorityRequest, tokenDto));
 
-        verify(jwtTokenProvider, times(1)).getUserId(argThat(id -> id.equals(TOKEN)));
         verify(userRepository, times(1)).getUserById(argThat(id -> id == 1));
         verify(userRepository, times(1)).findUserById(argThat(id -> id == 2));
 
@@ -167,15 +161,14 @@ class AuthorityServiceTest {
     @Test
     void get() {
 
-        when(jwtTokenProvider.getUserId(any(String.class))).thenReturn(ACCOUNTANT_ID);
-        when(userRepository.getUserById(any(Long.class))).thenReturn(accountant);
         when(roleRepository.findByRoleName(any(String.class))).thenReturn(Optional.of(role));
         when(userRepository.findAllByCompanyAndRole(any(Company.class), any(Role.class), any(Pageable.class))).thenReturn(users);
         when(converterService.userToGetAuthorityResponse(any(User.class))).thenReturn(getAuthorityResponse);
+        when(userRepository.getUserById(any(Long.class))).thenReturn(user);
 
-        assertEquals(getAuthorityResponses, authorityService.get(SIZE, PAGE, TOKEN));
 
-        verify(jwtTokenProvider, times(1)).getUserId(argThat(id -> id.equals(TOKEN)));
+        assertEquals(getAuthorityResponses, authorityService.get(SIZE, PAGE, tokenDto));
+
         verify(userRepository, times(1)).getUserById(argThat(id -> id == 1));
         verify(roleRepository, times(1)).findByRoleName(argThat(role -> role.equals(ROLE_USER)));
         verify(userRepository, times(1)).findAllByCompanyAndRole(argThat(company -> company.equals(this.company)),
@@ -190,13 +183,11 @@ class AuthorityServiceTest {
     @Test
     void getShouldThrowRoleNotFoundException() {
 
-        when(jwtTokenProvider.getUserId(any(String.class))).thenReturn(ACCOUNTANT_ID);
         when(userRepository.getUserById(any(Long.class))).thenReturn(accountant);
         when(roleRepository.findByRoleName(any(String.class))).thenReturn(Optional.empty());
 
-        assertThrows(RoleNotFoundException.class, () -> authorityService.get(SIZE, PAGE, TOKEN));
+        assertThrows(RoleNotFoundException.class, () -> authorityService.get(SIZE, PAGE, tokenDto));
 
-        verify(jwtTokenProvider, times(1)).getUserId(argThat(id -> id.equals(TOKEN)));
         verify(userRepository, times(1)).getUserById(argThat(id -> id == 1));
         verify(roleRepository, times(1)).findByRoleName(argThat(role -> role.equals(ROLE_USER)));
 

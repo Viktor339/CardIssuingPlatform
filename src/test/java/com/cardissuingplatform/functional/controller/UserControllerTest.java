@@ -7,7 +7,6 @@ import com.cardissuingplatform.controller.response.ChangePasswordResponse;
 import com.cardissuingplatform.controller.response.LoginResponse;
 import com.cardissuingplatform.controller.response.RegistrationResponse;
 import com.cardissuingplatform.functional.IntegrationTestBase;
-import com.cardissuingplatform.functional.TestUtil;
 import com.cardissuingplatform.service.exception.AuthenticationException;
 import com.cardissuingplatform.service.exception.CompanyNotFoundException;
 import com.cardissuingplatform.service.exception.RoleNotFoundException;
@@ -22,7 +21,6 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import java.time.LocalDate;
 
-import static com.cardissuingplatform.functional.TestUtil.objectToJson;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -43,6 +41,8 @@ class UserControllerTest extends IntegrationTestBase {
     private RegistrationResponse registrationResponse;
     private ChangePasswordRequest changePasswordRequest;
     private ChangePasswordResponse changePasswordResponse;
+    @Autowired
+    private ObjectMapper objectMapper;
 
 
     @BeforeEach
@@ -86,12 +86,11 @@ class UserControllerTest extends IntegrationTestBase {
 
         String contentAsString = mockMvc.perform(post("/accountant/v1/users/login")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectToJson(loginRequest))
+                        .content(objectMapper.writeValueAsString(loginRequest))
                 ).andDo(print())
                 .andExpect(status().isOk())
                 .andReturn().getResponse().getContentAsString();
 
-        ObjectMapper objectMapper = TestUtil.getObjectMapper();
         LoginResponse loginResponse = objectMapper.readValue(contentAsString, LoginResponse.class);
 
         Assertions.assertEquals(this.loginResponse.getId(), loginResponse.getId());
@@ -106,7 +105,7 @@ class UserControllerTest extends IntegrationTestBase {
 
         mockMvc.perform(post("/accountant/v1/users/login")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectToJson(loginRequest))
+                        .content(objectMapper.writeValueAsString(loginRequest))
                 ).andDo(print())
                 .andExpect(status().is4xxClientError())
                 .andExpect(result -> assertTrue(result.getResolvedException() instanceof AuthenticationException));
@@ -122,7 +121,7 @@ class UserControllerTest extends IntegrationTestBase {
 
         mockMvc.perform(post("/accountant/v1/users/login")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectToJson(loginRequest))
+                        .content(objectMapper.writeValueAsString(loginRequest))
                 ).andDo(print())
                 .andExpect(status().is4xxClientError())
                 .andExpect(result -> assertTrue(result.getResolvedException() instanceof AuthenticationException));
@@ -134,12 +133,11 @@ class UserControllerTest extends IntegrationTestBase {
 
         String contentAsString = mockMvc.perform(post("/accountant/v1/users/registration")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectToJson(registrationRequest))
+                        .content(objectMapper.writeValueAsString(registrationRequest))
                 ).andDo(print())
                 .andExpect(status().isOk())
                 .andReturn().getResponse().getContentAsString();
 
-        ObjectMapper objectMapper = TestUtil.getObjectMapper();
         RegistrationResponse registrationResponse = objectMapper.readValue(contentAsString, RegistrationResponse.class);
 
         Assertions.assertEquals(this.registrationResponse.getUserId(), registrationResponse.getUserId());
@@ -154,7 +152,7 @@ class UserControllerTest extends IntegrationTestBase {
 
         mockMvc.perform(post("/accountant/v1/users/registration")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectToJson(registrationRequest))
+                        .content(objectMapper.writeValueAsString(registrationRequest))
                 ).andDo(print())
                 .andExpect(status().is4xxClientError())
                 .andExpect(result -> assertTrue(result.getResolvedException() instanceof UserAlreadyExistException));
@@ -168,7 +166,7 @@ class UserControllerTest extends IntegrationTestBase {
 
         mockMvc.perform(post("/accountant/v1/users/registration")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectToJson(registrationRequest))
+                        .content(objectMapper.writeValueAsString(registrationRequest))
                 ).andDo(print())
                 .andExpect(status().is4xxClientError())
                 .andExpect(result -> assertTrue(result.getResolvedException() instanceof CompanyNotFoundException));
@@ -182,7 +180,7 @@ class UserControllerTest extends IntegrationTestBase {
 
         mockMvc.perform(post("/accountant/v1/users/registration")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectToJson(registrationRequest))
+                        .content(objectMapper.writeValueAsString(registrationRequest))
                 ).andDo(print())
                 .andExpect(status().is4xxClientError())
                 .andExpect(result -> assertTrue(result.getResolvedException() instanceof RoleNotFoundException));
@@ -194,13 +192,12 @@ class UserControllerTest extends IntegrationTestBase {
 
         String contentAsString = mockMvc.perform(patch("/accountant/v1/users/password/change")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectToJson(changePasswordRequest))
+                        .content(objectMapper.writeValueAsString(changePasswordRequest))
                         .header("Authorization", TOKEN)
                 ).andDo(print())
                 .andExpect(status().isOk())
                 .andReturn().getResponse().getContentAsString();
 
-        ObjectMapper objectMapper = TestUtil.getObjectMapper();
         ChangePasswordResponse changePasswordResponse = objectMapper.readValue(contentAsString, ChangePasswordResponse.class);
 
         Assertions.assertEquals(this.changePasswordResponse.getUserId(), changePasswordResponse.getUserId());
