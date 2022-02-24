@@ -1,15 +1,15 @@
 package com.cardissuingplatform.functional;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 
+@Configuration
 public class TestUtil {
 
-    public static String objectToJson(Object object) throws JsonProcessingException {
-        return new ObjectMapper().writeValueAsString(object);
-    }
-    public static ObjectMapper getObjectMapper() {
+    @Bean
+    public ObjectMapper getObjectMapper() {
         return new ObjectMapper().registerModule(new JavaTimeModule());
     }
 

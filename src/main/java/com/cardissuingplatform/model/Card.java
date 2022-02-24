@@ -2,8 +2,10 @@ package com.cardissuingplatform.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -18,10 +20,12 @@ import java.time.Instant;
 
 @Entity
 @Table(name = "cards")
-@Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder(toBuilder = true)
+@Getter
+@Setter
+@EqualsAndHashCode(of = {"id"})
 public class Card {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

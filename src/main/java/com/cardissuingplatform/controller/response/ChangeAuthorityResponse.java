@@ -5,10 +5,13 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 
+import java.util.List;
+
 @Data
 @Builder(toBuilder = true)
 @RequiredArgsConstructor
 @AllArgsConstructor
-public class ChangePasswordResponse {
+public class ChangeAuthorityResponse {
     private Long userId;
+    private List<String> authorities;
 }

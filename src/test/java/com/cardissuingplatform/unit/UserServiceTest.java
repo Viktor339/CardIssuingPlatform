@@ -1,5 +1,6 @@
 package com.cardissuingplatform.unit;
 
+import com.cardissuingplatform.controller.dto.TokenDto;
 import com.cardissuingplatform.controller.request.ChangePasswordRequest;
 import com.cardissuingplatform.controller.request.LoginRequest;
 import com.cardissuingplatform.controller.request.RegistrationRequest;
@@ -17,16 +18,12 @@ import com.cardissuingplatform.service.exception.AuthenticationException;
 import com.cardissuingplatform.service.exception.CompanyNotFoundException;
 import com.cardissuingplatform.service.exception.RoleNotFoundException;
 import com.cardissuingplatform.service.exception.UserAlreadyExistException;
-import com.cardissuingplatform.service.exception.UserNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContext;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.time.Instant;
@@ -52,7 +49,6 @@ class UserServiceTest {
     private static final String EMAIL = "email";
     private static final String USERNAME = "username";
     private static final String DATE = "1999-12-12";
-    private static final String TOKEN = "token";
 
 
     @InjectMocks
@@ -67,10 +63,6 @@ class UserServiceTest {
     private RoleRepository roleRepository;
     @Mock
     private CompanyRepository companyRepository;
-    @Mock
-    private Authentication authentication;
-    @Mock
-    private SecurityContext securityContext;
 
     private LoginRequest loginRequest;
     private LoginResponse loginResponse;
@@ -80,11 +72,11 @@ class UserServiceTest {
     private User user;
     private Company company;
     private Role role;
+    private TokenDto tokenDto;
 
     @BeforeEach
     void setUp() {
 
-        SecurityContextHolder.setContext(securityContext);
         loginRequest = new LoginRequest();
         loginRequest.setEmail(EMAIL);
         loginRequest.setPassword(PASSWORD);
@@ -126,6 +118,9 @@ class UserServiceTest {
 
         changePasswordResponse = ChangePasswordResponse.builder()
                 .userId(user.getId())
+                .build();
+        tokenDto = TokenDto.builder()
+                .userId("1")
                 .build();
     }
 
@@ -234,50 +229,28 @@ class UserServiceTest {
     @Test
     void changePassword() {
 
-        when(jwtTokenProvider.getUserId(any(String.class))).thenReturn("1");
-        when(userRepository.findUserById(any(Long.class))).thenReturn(Optional.ofNullable(user));
-        when(securityContext.getAuthentication()).thenReturn(authentication);
-        when(authentication.getPrincipal()).thenReturn(TOKEN);
+        when(userRepository.getUserById(any(Long.class))).thenReturn(user);
         when(passwordEncoder.matches(changePasswordRequest.getOldPassword(), user.getPassword())).thenReturn(true);
 
-        assertEquals(changePasswordResponse, userService.changePassword(changePasswordRequest));
+        assertEquals(changePasswordResponse, userService.changePassword(changePasswordRequest, tokenDto));
 
-        verify(jwtTokenProvider, times(1)).getUserId(argThat(token -> token.equals(TOKEN)));
-        verify(userRepository, times(1)).findUserById(argThat(userId -> userId.equals(1L)));
+        verify(userRepository, times(1)).getUserById(argThat(userId -> userId.equals(1L)));
         verify(passwordEncoder, times(1)).matches(argThat(pass -> pass.equals(PASSWORD)),
                 argThat(userPass -> userPass.equals(PASSWORD)));
         verify(passwordEncoder, times(1)).encode(changePasswordRequest.getNewPassword());
 
     }
 
-    @Test
-    void changePasswordShouldThrowUserNotFoundException() {
-
-        when(jwtTokenProvider.getUserId(any(String.class))).thenReturn("1");
-        when(userRepository.findUserById(any(Long.class))).thenReturn(Optional.empty());
-        when(securityContext.getAuthentication()).thenReturn(authentication);
-        when(authentication.getPrincipal()).thenReturn(TOKEN);
-
-        assertThrows(UserNotFoundException.class, () -> userService.changePassword(changePasswordRequest));
-
-        verify(jwtTokenProvider, times(1)).getUserId(argThat(token -> token.equals(TOKEN)));
-        verify(userRepository, times(1)).findUserById(argThat(userId -> userId.equals(1L)));
-
-    }
 
     @Test
     void changePasswordShouldThrowAuthenticationException() {
 
-        when(jwtTokenProvider.getUserId(any(String.class))).thenReturn("1");
-        when(userRepository.findUserById(any(Long.class))).thenReturn(Optional.ofNullable(user));
-        when(securityContext.getAuthentication()).thenReturn(authentication);
-        when(authentication.getPrincipal()).thenReturn(TOKEN);
+        when(userRepository.getUserById(any(Long.class))).thenReturn(user);
         when(passwordEncoder.matches(changePasswordRequest.getOldPassword(), user.getPassword())).thenReturn(false);
 
-        assertThrows(AuthenticationException.class, () -> userService.changePassword(changePasswordRequest));
+        assertThrows(AuthenticationException.class, () -> userService.changePassword(changePasswordRequest, tokenDto));
 
-        verify(jwtTokenProvider, times(1)).getUserId(argThat(token -> token.equals(TOKEN)));
-        verify(userRepository, times(1)).findUserById(argThat(userId -> userId.equals(1L)));
+        verify(userRepository, times(1)).getUserById(argThat(userId -> userId.equals(1L)));
         verify(passwordEncoder, times(1)).matches(argThat(pass -> pass.equals(PASSWORD)),
                 argThat(userPass -> userPass.equals(PASSWORD)));
     }
