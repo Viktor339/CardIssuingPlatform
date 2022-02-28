@@ -12,6 +12,9 @@ spring:
     contexts: dev
   jpa:
     show-sql: true
+  rabbitmq:
+    host: localhost
+    port: 5672
 validator:
   company:
     page:

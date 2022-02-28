@@ -10,5 +10,5 @@ import java.util.List;
 public class TokenDto {
 
     private List<String> roles;
-    private String userId;
+    private Long userId;
 }

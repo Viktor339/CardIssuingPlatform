@@ -120,7 +120,7 @@ class UserServiceTest {
                 .userId(user.getId())
                 .build();
         tokenDto = TokenDto.builder()
-                .userId("1")
+                .userId(1L)
                 .build();
     }
 

@@ -37,9 +37,9 @@ public class AuthorityService {
     @Transactional
     public ChangeAuthorityResponse change(ChangeAuthorityRequest changeAuthorityRequest, TokenDto tokenDto) {
 
-        String accountantId = tokenDto.getUserId();
+        Long accountantId = tokenDto.getUserId();
 
-        User accountant = userRepository.getUserById(Long.parseLong(accountantId));
+        User accountant = userRepository.getUserById(accountantId);
         User user = userRepository.findUserById(changeAuthorityRequest.getUserId())
                 .orElseThrow(() -> new UserNotFoundException("User not found"));
 
@@ -72,9 +72,9 @@ public class AuthorityService {
     @Transactional
     public List<GetAuthorityResponse> get(Integer size, Integer page, TokenDto tokenDto) {
 
-        String accountantId = tokenDto.getUserId();
+        Long accountantId = tokenDto.getUserId();
 
-        User accountant = userRepository.getUserById(Long.parseLong(accountantId));
+        User accountant = userRepository.getUserById(accountantId);
 
         Role role = roleRepository.findByRoleName("ROLE_USER")
                 .orElseThrow(() -> new RoleNotFoundException("Role not found"));

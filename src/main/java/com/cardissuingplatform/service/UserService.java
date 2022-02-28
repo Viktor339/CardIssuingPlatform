@@ -86,9 +86,9 @@ public class UserService {
     @Transactional
     public ChangePasswordResponse changePassword(ChangePasswordRequest changePasswordRequest, TokenDto tokenDto) {
 
-        String userId = tokenDto.getUserId();
+        Long userId = tokenDto.getUserId();
 
-        User user = userRepository.getUserById(Long.parseLong(userId));
+        User user = userRepository.getUserById(userId);
 
         if (!passwordEncoder.matches(changePasswordRequest.getOldPassword(), user.getPassword())) {
             throw new AuthenticationException("Incorrect password");

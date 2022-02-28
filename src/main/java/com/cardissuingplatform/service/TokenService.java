@@ -16,8 +16,8 @@ public class TokenService {
 
     public RefreshTokenResponse refresh(String token, Long id) {
 
-        User user = userRepository.findUserById(id).orElseThrow(() ->
-                new UserNotFoundException("User not found"));
+        User user = userRepository.findUserById(id)
+                .orElseThrow(() -> new UserNotFoundException("User not found"));
 
         jwtTokenProvider.validateToken(token);
 
