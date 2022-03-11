@@ -106,7 +106,7 @@ class AuthorityServiceTest {
 
 
         tokenDto = TokenDto.builder()
-                .userId("1")
+                .userId(1L)
                 .build();
     }
 

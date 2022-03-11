@@ -12,5 +12,4 @@ public class TestUtil {
     public ObjectMapper getObjectMapper() {
         return new ObjectMapper().registerModule(new JavaTimeModule());
     }
-
 }

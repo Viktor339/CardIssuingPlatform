@@ -30,7 +30,7 @@ public class AuthorityTokenArgumentResolver implements HandlerMethodArgumentReso
 
         return TokenDto.builder()
                 .roles(jwtTokenProvider.getRoles(token))
-                .userId(jwtTokenProvider.getUserId(token))
+                .userId(Long.parseLong(jwtTokenProvider.getUserId(token)))
                 .build();
     }
 }
